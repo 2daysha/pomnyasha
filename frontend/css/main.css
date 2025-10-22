@@ -1,0 +1,74 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: content-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  background-color: #D6E8B0;
+  font-family: "M PLUS Rounded 1c", sans-serif;
+  font-weight: 400;
+}
+
+main {
+  width: 100%;
+}
+main div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem;
+  margin: 18rem 2rem;
+  background-color: #4A8274;
+  border-radius: 1rem;
+}
+main div i {
+  font-size: 3.7rem;
+  color: #E5F0ED;
+}
+main div a {
+  font-size: 1.8rem;
+  text-decoration: none;
+  font-weight: 500;
+  color: #E5F0ED;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  height: 9rem;
+  width: 100%;
+  background-color: #7DB5A7;
+  border-radius: 1.5rem 1.5rem 0 0;
+  box-shadow: 0 -1rem 2.5rem rgba(37, 65, 58, 0.15);
+  display: flex;
+  justify-content: center;
+}
+footer div {
+  position: absolute;
+  bottom: 0;
+  height: 7.5rem;
+  width: 90%;
+  background-color: #E5F0ED;
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+footer div div {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+footer div div i {
+  font-size: 3.7rem;
+  color: #25413A;
+}
+footer div div i:hover {
+  color: #7DB5A7;
+}
+
+/*# sourceMappingURL=main.css.map */

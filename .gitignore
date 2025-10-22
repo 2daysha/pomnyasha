@@ -1,0 +1,63 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# --- Virtual envs ---
+venv/
+env/
+Pomnysha/
+*.egg-info/
+build/
+dist/
+
+# --- Secrets ---
+.env
+secrets/
+*.json
+google_token.json
+client_secret.json
+*.pem
+*.p12
+
+# --- IDE files ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Logs ---
+*.log# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+
+# --- Virtual envs ---
+venv/
+env/
+Pomnysha/
+*.egg-info/
+build/
+dist/
+
+# --- Secrets ---
+.env
+secrets/
+*.json
+google_token.json
+client_secret.json
+*.pem
+*.p12
+
+# --- IDE files ---
+.vscode/
+.idea/
+.DS_Store
+
+# --- Logs ---
+*.log

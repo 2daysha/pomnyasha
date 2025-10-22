@@ -1,0 +1,80 @@
+@use 'variables';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: content-box;
+}
+
+html {
+    font-size: 62.5%;
+}
+
+body {
+    background-color: variables.$background_color;
+    font-family: "M PLUS Rounded 1c", sans-serif;
+    font-weight: 400;
+}
+
+main {
+    width: 100%;
+
+    div {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 1rem;
+        margin: 18rem 2rem;
+        background-color: variables.$button_color;
+        border-radius: 1rem;
+
+        i {
+            font-size: 3.7rem;
+            color: variables.$footer_border;
+        }
+        a {
+            font-size: 1.8rem;
+            text-decoration: none;
+            font-weight: 500;
+            color: variables.$footer_border;
+        }
+    }
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    height: 9rem;
+    width: 100%;
+    background-color: variables.$footer_background;
+    border-radius: 1.5rem 1.5rem 0 0;
+    box-shadow: 0 -1rem 2.5rem rgba(variables.$text_color, 0.15);
+    display: flex;
+    justify-content: center;
+
+    div {
+        position: absolute;
+        bottom: 0;
+        height: 9rem - 1.5rem;
+        width: 90%;
+        background-color: variables.$footer_border;
+        border-radius: .5rem .5rem 0 0;
+
+        div {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+
+            i {
+                font-size: 3.7rem;
+                color: variables.$text_color;
+                &:hover {
+                    color: variables.$footer_background;
+                }
+            
+            }
+        }
+    }
+}
