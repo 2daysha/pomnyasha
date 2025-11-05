@@ -13,7 +13,6 @@
       justify-content: center;
       align-items: center;
     }
-
     .card {
       background: white;
       border-radius: 20px;
@@ -23,29 +22,13 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       animation: fadeIn 0.8s ease;
     }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    .logo {
-      font-size: 60px;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 26px;
-      color: #333;
-    }
-
-    p {
-      color: #666;
-      font-size: 15px;
-      margin-bottom: 40px;
-    }
-
+    .logo { font-size: 60px; margin-bottom: 20px; }
+    h1 { margin: 0; font-size: 26px; color: #333; }
+    p { color: #666; font-size: 15px; margin-bottom: 40px; }
     button {
       display: block;
       width: 100%;
@@ -58,42 +41,39 @@
       transition: background 0.3s;
       color: white;
     }
-
-    .calendar-btn {
-      background-color: #667eea;
-    }
-    .calendar-btn:hover {
-      background-color: #5568d9;
-    }
-
-    .google-btn {
-      background-color: #4285F4;
-    }
-    .google-btn:hover {
-      background-color: #357ae8;
-    }
-
-    .yandex-btn {
-      background-color: #FFCC00;
-      color: black;
-    }
-    .yandex-btn:hover {
-      background-color: #ffb300;
-    }
+    .calendar-btn { background-color: #667eea; }
+    .calendar-btn:hover { background-color: #5568d9; }
+    .google-btn { background-color: #4285F4; }
+    .google-btn:hover { background-color: #357ae8; }
   </style>
 </head>
 <body>
   <div class="card">
     <div class="logo">🧠</div>
     <h1>Помняша</h1>
-    <p>Умный помощник для планирования задач и встреч</p>
+    <p>Умный календарь с ИИ и синхронизацией Google</p>
 
     <button class="calendar-btn" onclick="window.location.href='/calendar'">🗓 Открыть календарь</button>
-    <button class="google-btn" onclick="window.location.href='/oauth2/login'">
-        🔵 Войти через Google
-      </button>
-      
-    <button class="yandex-btn">🟠 Войти через Яндекс</button>
+    <button id="loginBtn" class="google-btn">🔵 Войти через Google</button>
   </div>
+
+  <script>
+    async function checkAuth() {
+      try {
+        const response = await fetch('/me');
+        const data = await response.json();
+        const btn = document.getElementById('loginBtn');
+        if (data.authorized) {
+          btn.textContent = '✅ Google подключен';
+          btn.style.background = '#4CAF50';
+        } else {
+          btn.onclick = () => location.href = '/oauth2/login';
+        }
+      } catch (e) {
+        console.error('Ошибка проверки авторизации', e);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
 </body>
 </html>

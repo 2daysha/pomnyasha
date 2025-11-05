@@ -8,32 +8,52 @@
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/locales/ru.global.min.js"></script>
   <style>
-    body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:#f3f4f6; }
+    body {
+      margin:0; font-family:'Inter',sans-serif;
+      background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+      min-height:100vh;
+    }
     header {
       display:flex; align-items:center; justify-content:space-between;
       padding:14px 18px; background:#fff; border-bottom:1px solid #ddd;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
     }
-    .title { font-weight:700; font-size:18px; }
-    .actions { display:flex; gap:10px; }
-    button { background:#4f46e5; color:#fff; border:0; padding:9px 14px; border-radius:8px; cursor:pointer; }
-    button.secondary { background:#e5e7eb; color:#111; }
-    #calendar {
-      max-width: 1200px; margin: 20px auto; background:#fff; border-radius:10px;
-      padding:15px; box-shadow:0 6px 16px rgba(0,0,0,0.06);
+    .title{font-weight:700;font-size:18px;color:#333;}
+    .actions{display:flex;gap:10px;}
+    button{
+      background:#667eea;color:#fff;border:0;padding:9px 14px;
+      border-radius:8px;cursor:pointer;font-weight:600;
     }
-    .modal {
-      display:none; position:fixed; inset:0; background:rgba(0,0,0,.35);
-      align-items:center; justify-content:center; z-index:1000;
+    button.secondary{background:#e5e7eb;color:#111;}
+    #calendar{
+      max-width:1200px;margin:30px auto;background:#fff;
+      border-radius:12px;padding:20px;box-shadow:0 8px 24px rgba(0,0,0,0.15);
     }
-    .modal .card {
-      background:#fff; width:360px; border-radius:12px; padding:20px;
-      box-shadow:0 10px 30px rgba(0,0,0,.2);
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);
+      align-items:center;justify-content:center;z-index:1000;}
+    .modal .card{
+      background:#fff;width:380px;border-radius:14px;padding:22px;
+      box-shadow:0 12px 40px rgba(0,0,0,0.2);
     }
-    .field { display:flex; flex-direction:column; gap:5px; margin:10px 0; }
-    .field input,.field textarea { border:1px solid #ddd; border-radius:8px; padding:8px 10px; }
-    .row { display:flex; gap:10px; }
-    .danger { background:#ef4444; }
-    .muted { color:#6b7280; font-size:13px; }
+    .field{display:flex;flex-direction:column;gap:5px;margin:10px 0;}
+    .field input,.field textarea{
+      border:1px solid #ddd;border-radius:8px;padding:10px;font-family:inherit;
+    }
+    .row{display:flex;gap:10px;}
+    .danger{background:#ef4444;}
+    .muted{color:#6b7280;font-size:13px;}
+    .chat{
+      display:none;position:fixed;right:24px;bottom:24px;width:400px;height:520px;
+      background:#fff;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.3);
+      overflow:hidden;z-index:1200;display:flex;flex-direction:column;
+    }
+    .chat header{padding:12px 14px;border-bottom:1px solid #eee;background:#667eea;color:white;}
+    .chat .body{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8fafc;}
+    .bubble{max-width:80%;padding:12px 14px;border-radius:14px;line-height:1.35;}
+    .bubble.ai{background:#e9f0ff;align-self:flex-start;}
+    .bubble.me{background:#667eea;color:#fff;align-self:flex-end;}
+    .chat footer{display:flex;gap:8px;padding:10px;border-top:1px solid #eee;}
+    .chat footer input{flex:1;border:1px solid #ddd;border-radius:10px;padding:10px;}
   </style>
 </head>
 <body>
@@ -41,205 +61,78 @@
     <div class="title">📅 Мой календарь</div>
     <div><span id="syncIndicator" class="muted">Ожидание изменений…</span></div>
     <div class="actions">
-      <button id="addBtn">Добавить событие</button>
+      <button id="addBtn">Добавить</button>
+      <button id="aiBtn" class="secondary">ИИ-помощник</button>
       <button class="secondary" onclick="location.href='/'">Домой</button>
     </div>
   </header>
 
   <div id="calendar"></div>
 
-  <!-- Модалка добавления/редактирования -->
   <div class="modal" id="editModal">
     <div class="card">
       <h3 id="modalTitle">Добавить событие</h3>
-      <div class="field">
-        <label>Название</label>
-        <input id="titleInput" placeholder="Например, встреча">
-      </div>
-      <div class="field">
-        <label>Описание</label>
-        <textarea id="descInput" rows="3" placeholder="Необязательно"></textarea>
-      </div>
+      <div class="field"><label>Название</label><input id="titleInput"></div>
+      <div class="field"><label>Описание</label><textarea id="descInput" rows="3"></textarea></div>
       <div class="row">
-        <div class="field" style="flex:1">
-          <label>Начало</label>
-          <input id="startInput" type="datetime-local">
-        </div>
-        <div class="field" style="flex:1">
-          <label>Окончание</label>
-          <input id="endInput" type="datetime-local">
-        </div>
+        <div class="field" style="flex:1"><label>Начало</label><input id="startInput" type="datetime-local"></div>
+        <div class="field" style="flex:1"><label>Окончание</label><input id="endInput" type="datetime-local"></div>
       </div>
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px;">
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:12px;">
         <button class="secondary" id="cancelBtn">Отмена</button>
         <button id="saveBtn">Сохранить</button>
       </div>
     </div>
   </div>
 
-  <!-- Модалка просмотра события -->
   <div class="modal" id="viewModal">
     <div class="card">
       <h3 id="viewTitle" style="margin-top:0;"></h3>
       <p id="viewDesc" class="muted"></p>
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
-        <button class="secondary" id="editBtn">✏️ Редактировать</button>
-        <button class="danger" id="deleteBtn">🗑 Удалить</button>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:10px;">
+        <button class="secondary" id="editBtn">✏️</button>
+        <button class="danger" id="deleteBtn">🗑</button>
       </div>
     </div>
   </div>
 
+  <div class="chat" id="chatBox">
+    <header>
+      <div style="font-weight:700">ИИ-ассистент</div>
+    </header>
+    <div class="body" id="chatBody"></div>
+    <footer>
+      <input id="chatInput" placeholder="Напишите сообщение…">
+      <button id="sendChat">Отправить</button>
+    </footer>
+  </div>
+
   <script>
-    let calendar;
-    let editingEvent = null;
-    let viewedEvent = null;
-
-    function isoLocal(dt) {
-      const d = new Date(dt);
-      return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString();
-    }
-
-    function openEditModal(ev=null) {
-      editingEvent = ev;
-      document.getElementById('modalTitle').textContent = ev ? 'Редактировать событие' : 'Добавить событие';
-      const modal = document.getElementById('editModal');
-      modal.style.display = 'flex';
-
-      const title = document.getElementById('titleInput');
-      const desc = document.getElementById('descInput');
-      const start = document.getElementById('startInput');
-      const end = document.getElementById('endInput');
-
-      if (ev) {
-        title.value = ev.title;
-        desc.value = ev.extendedProps?.description || '';
-        start.value = new Date(ev.start.getTime() - ev.start.getTimezoneOffset()*60000).toISOString().slice(0,16);
-        end.value = new Date(ev.end.getTime() - ev.end.getTimezoneOffset()*60000).toISOString().slice(0,16);
-      } else {
-        title.value = '';
-        desc.value = '';
-        const now = new Date();
-        const later = new Date(now.getTime() + 60*60*1000);
-        start.value = new Date(now.getTime() - now.getTimezoneOffset()*60000).toISOString().slice(0,16);
-        end.value = new Date(later.getTime() - later.getTimezoneOffset()*60000).toISOString().slice(0,16);
-      }
-    }
-
-    function closeEditModal() {
-      document.getElementById('editModal').style.display = 'none';
-      editingEvent = null;
-    }
-
-    function openViewModal(ev) {
-      viewedEvent = ev;
-      document.getElementById('viewTitle').textContent = ev.title;
-      document.getElementById('viewDesc').textContent = ev.extendedProps?.description || 'Без описания';
-      document.getElementById('viewModal').style.display = 'flex';
-    }
-
-    function closeViewModal() {
-      document.getElementById('viewModal').style.display = 'none';
-      viewedEvent = null;
-    }
-
-    async function loadEvents() {
-      const res = await fetch('/events');
-      const data = await res.json();
-      return data.map(e => ({
-        id: e.id,
-        title: e.title,
-        start: e.start,
-        end: e.end,
-        extendedProps: { description: e.description, source: e.source }
-      }));
-    }
-
-    async function refresh() {
-      const events = await loadEvents();
-      calendar.removeAllEvents();
-      calendar.addEventSource(events);
-    }
-
-    async function syncNow() {
-      const indicator = document.getElementById('syncIndicator');
-      indicator.textContent = '🔄 Синхронизация…';
-      await fetch('/sync');
-      await refresh();
-      indicator.textContent = '✅ Синхронизировано';
-      setTimeout(() => indicator.textContent = 'Ожидание изменений…', 2000);
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
-        locale: 'ru',
-        height: 'auto',
-        initialView: 'dayGridMonth',
-        buttonText: { today:'Сегодня', month:'Месяц', week:'Неделя', day:'День', list:'Список' },
-        headerToolbar: { left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek' },
-        editable: true,
-        selectable: true,
-        eventClick: info => openViewModal(info.event),
-        eventDrop: async info => {
-          await fetch(`/events/${info.event.id}`, {
-            method:'PUT', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-              title: info.event.title,
-              description: info.event.extendedProps?.description || '',
-              start: info.event.start.toISOString(),
-              end: info.event.end.toISOString()
-            })
-          });
-          await syncNow();
-        },
-        eventResize: async info => {
-          await fetch(`/events/${info.event.id}`, {
-            method:'PUT', headers:{'Content-Type':'application/json'},
-            body: JSON.stringify({
-              title: info.event.title,
-              description: info.event.extendedProps?.description || '',
-              start: info.event.start.toISOString(),
-              end: info.event.end.toISOString()
-            })
-          });
-          await syncNow();
-        }
-      });
-
-      calendar.render();
-      await refresh();
-
-      // добавление
-      document.getElementById('addBtn').onclick = () => openEditModal();
-      document.getElementById('cancelBtn').onclick = closeEditModal;
-      document.getElementById('saveBtn').onclick = async () => {
-        const title = document.getElementById('titleInput').value.trim();
-        const desc = document.getElementById('descInput').value.trim();
-        const start = isoLocal(document.getElementById('startInput').value);
-        const end = isoLocal(document.getElementById('endInput').value);
-        if (!title) return alert('Введите название');
-        if (editingEvent) {
-          await fetch(`/events/${editingEvent.id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ title, description:desc, start, end }) });
-        } else {
-          await fetch('/events', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ title, description:desc, start, end }) });
-        }
-        closeEditModal();
-        await syncNow();
-      };
-
-      // просмотр
-      document.getElementById('editBtn').onclick = () => { closeViewModal(); openEditModal(viewedEvent); };
-      document.getElementById('deleteBtn').onclick = async () => {
-        await fetch(`/events/${viewedEvent.id}`, { method:'DELETE' });
-        closeViewModal();
-        await syncNow();
-      };
-
-      // клики вне окна
-      document.getElementById('viewModal').onclick = e => { if (e.target.id==='viewModal') closeViewModal(); };
-      document.getElementById('editModal').onclick = e => { if (e.target.id==='editModal') closeEditModal(); };
-
-      setInterval(syncNow, 7000);
-    });
+    let calendar, editingEvent=null, viewedEvent=null
+    function isoLocal(dt){const d=new Date(dt);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString()}
+    function openEditModal(ev=null){editingEvent=ev;document.getElementById('modalTitle').textContent=ev?'Редактировать':'Добавить';document.getElementById('editModal').style.display='flex'
+      const t=document.getElementById('titleInput'),d=document.getElementById('descInput'),s=document.getElementById('startInput'),e=document.getElementById('endInput')
+      if(ev){t.value=ev.title;d.value=ev.extendedProps?.description||'';s.value=new Date(ev.start.getTime()-ev.start.getTimezoneOffset()*60000).toISOString().slice(0,16);e.value=new Date(ev.end.getTime()-ev.end.getTimezoneOffset()*60000).toISOString().slice(0,16)}else{t.value='';d.value='';const n=new Date(),l=new Date(n.getTime()+60*60*1000);s.value=new Date(n.getTime()-n.getTimezoneOffset()*60000).toISOString().slice(0,16);e.value=new Date(l.getTime()-l.getTimezoneOffset()*60000).toISOString().slice(0,16)}}
+    function closeEditModal(){document.getElementById('editModal').style.display='none';editingEvent=null}
+    function openViewModal(ev){viewedEvent=ev;document.getElementById('viewTitle').textContent=ev.title;document.getElementById('viewDesc').textContent=ev.extendedProps?.description||'Без описания';document.getElementById('viewModal').style.display='flex'}
+    function closeViewModal(){document.getElementById('viewModal').style.display='none';viewedEvent=null}
+    async function loadEvents(){const r=await fetch('/events');const d=await r.json();return d.map(e=>({id:e.id,title:e.title,start:e.start,end:e.end,extendedProps:{description:e.description,source:e.source}}))}
+    async function refresh(){const ev=await loadEvents();calendar.removeAllEvents();calendar.addEventSource(ev)}
+    async function syncNow(){const ind=document.getElementById('syncIndicator');ind.textContent='🔄 Синхронизация…';await fetch('/sync');await refresh();ind.textContent='✅';setTimeout(()=>ind.textContent='Ожидание…',2000)}
+    function chatPush(role,text){const b=document.createElement('div');b.className='bubble '+(role==='ai'?'ai':'me');b.textContent=text;const body=document.getElementById('chatBody');body.appendChild(b);body.scrollTop=body.scrollHeight}
+    async function chatSend(text){chatPush('me',text);try{const r=await fetch('/ai/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})});const j=await r.json();chatPush('ai',j.reply||'Ок')}catch(e){chatPush('ai','⚠️ Ошибка GigaChat')}}
+    document.addEventListener('DOMContentLoaded',async()=>{calendar=new FullCalendar.Calendar(document.getElementById('calendar'),{locale:'ru',height:'auto',initialView:'dayGridMonth',buttonText:{today:'Сегодня',month:'Месяц',week:'Неделя',day:'День',list:'Список'},headerToolbar:{left:'prev,next today',center:'title',right:'dayGridMonth,timeGridWeek,timeGridDay,listWeek'},editable:true,selectable:true,eventClick:i=>openViewModal(i.event),dateClick:i=>{const s=new Date(i.date),e=new Date(s.getTime()+60*60*1000);openEditModal({title:'',start:s,end:e,extendedProps:{}})},eventDrop:async i=>{await fetch(`/events/${i.event.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:i.event.title,description:i.event.extendedProps?.description||'',start:i.event.start.toISOString(),end:i.event.end.toISOString()})});await syncNow()},eventResize:async i=>{await fetch(`/events/${i.event.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:i.event.title,description:i.event.extendedProps?.description||'',start:i.event.start.toISOString(),end:i.event.end.toISOString()})});await syncNow()}})
+      calendar.render();await refresh()
+      document.getElementById('addBtn').onclick=()=>openEditModal()
+      document.getElementById('cancelBtn').onclick=closeEditModal
+      document.getElementById('saveBtn').onclick=async()=>{const t=document.getElementById('titleInput').value.trim(),d=document.getElementById('descInput').value.trim(),s=isoLocal(document.getElementById('startInput').value),e=isoLocal(document.getElementById('endInput').value);if(!t)return alert('Введите название');if(editingEvent&&editingEvent.id){await fetch(`/events/${editingEvent.id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:t,description:d,start:s,end:e})})}else{await fetch('/events',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:t,description:d,start:s,end:e})})}closeEditModal();await syncNow()}
+      document.getElementById('editBtn').onclick=()=>{closeViewModal();openEditModal(viewedEvent)}
+      document.getElementById('deleteBtn').onclick=async()=>{await fetch(`/events/${viewedEvent.id}`,{method:'DELETE'});closeViewModal();await syncNow()}
+      document.getElementById('aiBtn').onclick=()=>{document.getElementById('chatBox').style.display='flex';const body=document.getElementById('chatBody');if(!body.dataset.inited){chatPush('ai','Привет! Я GigaChat — помогу с планированием.');body.dataset.inited='1'}}
+      document.getElementById('sendChat').onclick=()=>{const v=document.getElementById('chatInput').value.trim();if(!v)return;document.getElementById('chatInput').value='';chatSend(v)}
+      document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('sendChat').click()})
+      setInterval(syncNow,10000)
+    })
   </script>
 </body>
 </html>

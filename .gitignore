@@ -1,63 +1,51 @@
-# --- Python ---
+# === СИСТЕМНЫЕ ФАЙЛЫ ===
 __pycache__/
-*.py[cod]
+*.pyc
 *.pyo
 *.pyd
-*.db
-*.sqlite3
-
-# --- Virtual envs ---
-venv/
-env/
-Pomnysha/
-*.egg-info/
-build/
-dist/
-
-# --- Secrets ---
-.env
-secrets/
-*.json
-google_token.json
-client_secret.json
-*.pem
-*.p12
-
-# --- IDE files ---
-.vscode/
-.idea/
-.DS_Store
-
-# --- Logs ---
-*.log# --- Python ---
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.db
-*.sqlite3
-
-# --- Virtual envs ---
-venv/
-env/
-Pomnysha/
-*.egg-info/
-build/
-dist/
-
-# --- Secrets ---
-.env
-secrets/
-*.json
-google_token.json
-client_secret.json
-*.pem
-*.p12
-
-# --- IDE files ---
-.vscode/
-.idea/
-.DS_Store
-
-# --- Logs ---
 *.log
+*.DS_Store
+
+# === PYTHON / VENV ===
+venv/
+.env
+*.env
+.env.*
+
+# === БАЗЫ ДАННЫХ ===
+app.db
+*.sqlite
+*.sqlite3
+
+# === GOOGLE / OAUTH SECRET ===
+client_secret.json
+client_secret_*.json
+secrets/
+token_*.json
+credentials.json
+
+# === FRONTEND / NODE ===
+node_modules/
+dist/
+build/
+
+# === IDE ===
+.vscode/
+.idea/
+
+# === КЭШИ ===
+.cache/
+*.bak
+*.swp
+*.tmp
+
+# === РЕЗЕРВНЫЕ АРХИВЫ ===
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# === СЕКРЕТНЫЕ ДАННЫЕ ===
+google_token.json
+config.env
+config.env.example
